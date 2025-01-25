@@ -25,7 +25,7 @@
                class="border mx-4 w-3/4 sm:w-1/2 p-2 border-sky-300 outline-none rounded-md">
       </div>
     </div>
-    <div class="bg-white shadow-md rounded-md mt-3 p-6 w-11/12 sm:w-6/12">
+    <div ref="receiptContent" class="bg-white shadow-md rounded-md mt-3 p-6 w-11/12 sm:w-6/12">
       <div class="py-5  border-2  border-blue-500 ">
         <label class="text-xl italic ml-2">SA</label>
       </div>
@@ -51,7 +51,7 @@
           <table class="w-7/12 sm:w-4/12">
             <tr class="border-2 border-blue-500">
               <th class="p-2 border-r border-blue-500">
-                <label class="text-base text-black font-normal">Total Amount Due</label>
+                <label class="text-base text-black font-normal border-b-0">Total Amount Due</label>
               </th>
               <th class="p-2">
                 <label class="text-base text-black font-normal">{{ students.outstanding_fees }}</label>
@@ -59,7 +59,7 @@
             </tr>
             <tr class="border-2 border-blue-500">
               <th class="p-2 border-r border-blue-500">
-                <label class="text-base text-black font-normal">Amount Received</label>
+                <label class="text-base text-black font-normal border-b-0">Amount Received</label>
               </th>
               <th class="p-2">
                 <label class="text-base text-black font-normal">{{ amount_received }}</label>
@@ -77,19 +77,25 @@
         </div>
         <div class="sm:flex text-start ml-2 mt-4">
           <label class="text-base w-3/4 sm:w-6/12 text-black font-normal">Payment Received in: {{ payment_rec }}</label>
-          <input class="border-0 border-b border-blue-400 w-6/12 sm:w-4/12 mr-2 sm:mr-0 ml-36 sm:ml-20 mt-2 sm:mt-0 text-center" v-model="received_by">
+          <input
+              class="border-0 border-b border-blue-400 w-6/12 sm:w-4/12 mr-2 sm:mr-0 ml-36 sm:ml-20 mt-2 sm:mt-0 text-center"
+              v-model="received_by">
         </div>
         <div class="text-end mr-9 sm:mr-20">
           <label class="text-base text-black font-normal">Received By</label>
         </div>
       </div>
     </div>
+    <button @click="printReceipt" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-3">
+      Download PDF
+    </button>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import HeaderC from "@/components/Header.vue";
+import html2pdf from "html2pdf.js";
 
 export default {
   name: 'ReceiptM',
@@ -151,6 +157,30 @@ export default {
       const [year, month, day] = date.split('-');
       return `${day} / ${month} / ${year}`;
     },
+    printReceipt() {
+      const element = this.$refs.receiptContent;
+
+      // Temporarily increase width for PDF
+      const originalWidth = element.style.width;
+      element.style.width = "100%";
+
+      html2pdf()
+          .from(element)
+          .set({
+            margin: 10,
+            filename: `receipt_${new Date().toISOString()}.pdf`,
+            image: {type: "jpeg", quality: 0.98},
+            html2canvas: {scale: 2},
+            jsPDF: {unit: "mm", format: "a4", orientation: "portrait"}
+          })
+          .save()
+          .then(() => {
+            // Revert width back after PDF is generated
+            element.style.width = originalWidth;
+          });
+    }
+
+
   },
   async mounted() {
     let response = await axios.get('Students/' + this.$route.params.id)
