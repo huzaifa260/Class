@@ -25,7 +25,7 @@
                class="border mx-4 w-3/4 sm:w-1/2 p-2 border-sky-300 outline-none rounded-md">
       </div>
     </div>
-    <div ref="receiptContent" class="bg-white shadow-md rounded-md mt-3 p-6 w-11/12 sm:w-6/12">
+    <div ref="receiptContent" id="receiptContent" class="bg-white shadow-md rounded-md mt-3 p-6 w-11/12 sm:w-6/12">
       <div class="py-5  border-2  border-blue-500 ">
         <label class="text-xl italic ml-2">SA</label>
       </div>
@@ -86,8 +86,11 @@
         </div>
       </div>
     </div>
-    <button @click="printReceipt" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-3">
+    <button @click="printReceipt" type="button" class="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-md mt-3">
       Download PDF
+    </button>
+    <button type="button" @click="updateFees" class="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-md mt-3">
+      Save
     </button>
   </div>
 </template>
@@ -124,6 +127,11 @@ export default {
       let paid_now = parseInt(this.amount_received);
       let total_paid = paid_fees + paid_now;
       return total_fees - total_paid
+    },
+    totalPaidFees() {
+      let paid_fees = this.students.paid_fees;
+      let paid_now = parseInt(this.amount_received);
+      return paid_fees + paid_now
     },
     amountInWords() {
       return this.convertToWords(this.amount_received)
@@ -168,7 +176,7 @@ export default {
           .from(element)
           .set({
             margin: 10,
-            filename: `receipt_${new Date().toISOString()}.pdf`,
+            filename: `receipt_${this.students.name}.pdf`,
             image: {type: "jpeg", quality: 0.98},
             html2canvas: {scale: 2},
             jsPDF: {unit: "mm", format: "a4", orientation: "portrait"}
@@ -178,20 +186,30 @@ export default {
             // Revert width back after PDF is generated
             element.style.width = originalWidth;
           });
-    }
+    },
+    async updateFees() {
+      let paidf = this.calculateDue;
+      let ot_fees = this.totalPaidFees;
 
+      try {
+        // Make sure the URL matches the one Django expects
+        let result = await axios.patch('http://127.0.0.1:8000/api/Students/' + this.$route.params.id + '/', {
+          paid_fees: paidf,
+          outstanding_fees: ot_fees
+        });
+
+        if (result.status === 200) {
+          this.$router.push({name: 'Home'});
+        }
+      } catch (error) {
+        console.error("Error during update:", error);
+      }
+    }
 
   },
   async mounted() {
     let response = await axios.get('Students/' + this.$route.params.id)
-    console.log(this.$route.params.id)
-    console.log(response.data)
     this.students = response.data
-    console.log("Student data", this.students)
-    console.log("Student name", this.students.name)
-    console.log("Student std", this.students.std)
-    console.log("Student tot fees", this.students.total_fees)
-    console.log("Student paid fees", this.students.paid_fees)
   }
 }
 </script>
