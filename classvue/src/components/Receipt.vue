@@ -29,8 +29,10 @@
       <div class="py-5  border-2  border-blue-500 ">
         <label class="text-xl italic ml-2">SA</label>
       </div>
-      <div class="py-3 border-2 border-t-0 border-blue-500 ">
-        <label class="text-xl italic ml-2">Add</label>
+      <div class="py-3 flex border-2 border-t-0 border-blue-500 ">
+        <label class="text-lg ml-2">
+          First Floor, Chawre Manzil, Opposite Z.B. College, Sopara Gaon(West) 401203
+        </label>
       </div>
       <div class="py-5  border-2 border-t-0 border-blue-500 text-center">
         <label class="text-2xl font-bold text-blue-950">Cash Receipt</label>
@@ -115,6 +117,7 @@ export default {
       date: '',
       payment_rec: [],
       received_by: '',
+      receipt_data: {},
     }
   },
   components: {
@@ -187,9 +190,26 @@ export default {
             element.style.width = originalWidth;
           });
     },
+    updateReceiptData() {
+      this.receipt_data = {
+        receipt_date: this.formatDate(this.date),
+        stud_name: this.students.name,
+        rs: this.amountInWords,
+        std: this.students.std,
+        tot_amount_due: this.students.outstanding_fees,
+        amount_recived: this.amount_received,
+        balance_due: this.calculateDue,
+        payment_received_in: this.payment_rec,
+        received_by: this.received_by
+      }
+    },
     async updateFees() {
-      let paidf = this.calculateDue;
-      let ot_fees = this.totalPaidFees;
+      let paidf = this.totalPaidFees;
+      let ot_fees = this.calculateDue;
+      let sr = this.$route.params.id
+      console.log("Sr = ", sr)
+      this.updateReceiptData()
+      console.log("Rec data", this.receipt_data)
 
       try {
         // Make sure the URL matches the one Django expects
@@ -198,7 +218,20 @@ export default {
           outstanding_fees: ot_fees
         });
 
-        if (result.status === 200) {
+        let receipt = await axios.post('Receipt/', {
+          sr: sr,
+          receipt_date: this.receipt_data.receipt_date,
+          stud_name: this.receipt_data.stud_name,
+          rs: this.receipt_data.rs,
+          std: this.receipt_data.std,
+          tot_amount_due: this.receipt_data.tot_amount_due.toString(),  // Convert to string
+          amount_recived: this.receipt_data.amount_recived.toString(),  // Convert to string
+          balance_due: this.receipt_data.balance_due.toString(),        // Convert to string
+          payment_received_in: this.receipt_data.payment_received_in.toString(), // Convert array to string
+          received_by: this.receipt_data.received_by,
+        });
+
+        if (result.status === 200 &&  receipt.status === 201) {
           this.$router.push({name: 'Home'});
         }
       } catch (error) {

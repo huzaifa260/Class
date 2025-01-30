@@ -1,8 +1,8 @@
 from django.db.models import Max
 from django.http import JsonResponse
 from django.shortcuts import render
-from .models import Student, user
-from .serializers import StudentSerializer, UserSerializer
+from .models import Student, user, Receipt
+from .serializers import StudentSerializer, UserSerializer, ReceiptSerializer
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -20,6 +20,11 @@ class StudentViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = user.objects.all()
     serializer_class = UserSerializer
+
+
+class ReceiptViewSet(viewsets.ModelViewSet):
+    queryset = Receipt.objects.all()
+    serializer_class = ReceiptSerializer
 
 
 @api_view(['POST'])

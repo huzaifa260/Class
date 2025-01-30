@@ -22,3 +22,16 @@ class user(models.Model):
 
     def __str__(self):
         return f"{self.username}"
+
+
+class Receipt(models.Model):
+    sr = models.IntegerField(blank=True, null=True)
+    receipt_date = models.CharField(max_length=50, blank=True, null=True)
+    stud_name = models.CharField(max_length=100, blank=True, null=True)
+    rs = models.CharField(max_length=100, blank=True, null=True)
+    std = models.CharField(max_length=30, blank=True, null=True)
+    tot_amount_due = models.CharField(max_length=30, blank=True, null=True)
+    amount_recived = models.CharField(max_length=30, blank=True, null=True)
+    balance_due = models.CharField(max_length=30, blank=True, null=True)
+    payment_received_in = models.CharField(max_length=150, blank=True, null=True)
+    received_by = models.CharField(max_length=100, blank=True, null=True)
