@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate, login
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 # Create your views here.
@@ -21,10 +22,39 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = user.objects.all()
     serializer_class = UserSerializer
 
+    def get_queryset(self):
+        # to add filter in api url like sr=2 we need to add get_queryset or django filters
+        # here we will see get_queryset()
+        queryset = user.objects.all()
+        username = self.request.query_params.get('username', None)
+        password = self.request.query_params.get('password', None)
+        # here we fetch value of username & password with 'self.request.query_params.get'
+        # this is require to fetch and in parameters ('username', None) 'username' is for
+        # that we want username value and none is default value if nothing is there it will take None
+
+        if username is not None and password is not None:
+            queryset = queryset.filter(username=username, password=password)
+        # here we add filter that username should match username pass in link and also password
+        # and for only username & only password also we need to create filter
+        elif username is not None:
+            queryset = queryset.filter(username=username)
+        elif password is not None:
+            queryset = queryset.filter(password=password)
+
+        return queryset
+        # and than return the queryset but this method is complex direct djangofilter is easy
+
 
 class ReceiptViewSet(viewsets.ModelViewSet):
     queryset = Receipt.objects.all()
     serializer_class = ReceiptSerializer
+
+    # to add filter in api url like sr=2 we add djangofilter
+    # for this first install django_filters with pip install django_filters than import DjangoFilterBackend
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['sr']
+    # after presiquite it is very easy just define filter_backends variable and than
+    # filterset_fields variable in which define which fields we require
 
 
 @api_view(['POST'])

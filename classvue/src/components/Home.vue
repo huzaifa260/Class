@@ -28,6 +28,9 @@
             <router-link :to="'/receipt/'+i.id">
               <button type="button" class="px-3 bg-sky-400 rounded-3xl text-white">Receipt</button>
             </router-link>
+            <router-link :to="'/showreceipts/'+i.id">
+              <button type="button" class="px-3 bg-sky-400 rounded-3xl text-white">Show Receipts</button>
+            </router-link>
           </td>
         </tr>
     </table>
