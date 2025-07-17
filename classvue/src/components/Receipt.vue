@@ -1,99 +1,228 @@
 <template>
   <HeaderC></HeaderC>
-  <div class="flex flex-col items-center justify-center mt-4 min-h-screen bg-gray-50">
-    <div class="items-center">
-      <label class="text-base font-medium py-1 ml-4 sm:ml-0">Amount Received:</label>
-      <input type="number" v-model="amount_received"
-             class="border mx-4 w-3/4 sm:w-1/2 p-2 border-sky-300 outline-none rounded-md"><br>
-      <label class="text-base font-medium py-1 mt-2 sm:mt-0 ml-4 sm:ml-0">Admission Date:</label>
-      <input type="date" id="date" v-model="date"
-             class="px-2 py-1 m-2 text-xl w-3/4 ml-4 sm:ml-0 sm:w-6/12 border border-sky-400 rounded-md outline-sky-500">
-      <div class="sm:flex sm:items-center ml-4 sm:ml-0">
-        <label class="text-base font-medium">Payment Received in:</label>
-        <div class="">
-          <input type="checkbox" value="Cash" id="cash" v-model="payment_rec" class="ml-2 mt-2">
-          <label for="cash" class="text-base font-medium ml-2">Cash</label>
-          <input type="checkbox" value="Online" id="online" v-model="payment_rec" class="ml-2 mt-2">
-          <label for="online" class="text-base font-medium ml-2">Online</label>
-          <input type="checkbox" value="Cheque" id="cheque" v-model="payment_rec" class="ml-2 mt-2">
-          <label for="cheque" class="text-base font-medium ml-2">Cheque</label>
+  <div
+      class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8 px-4">
+    <!-- Form Section with Animation -->
+    <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-2xl mb-8 animate-fade-in">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
+        </svg>
+        Payment Details
+      </h2>
+
+      <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Amount Received (₹)</label>
+            <input
+                type="number"
+                v-model="amount_received"
+                class="w-full px-4 py-2 border border-gray-300 outline-none rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+                placeholder="Enter amount"
+            >
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Admission Date</label>
+            <input
+                type="date"
+                id="date"
+                v-model="date"
+                class="w-full px-4 py-2 border border-gray-300 outline-none rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+            >
+          </div>
         </div>
-      </div>
-      <div class="mt-3">
-        <label class="text-base font-medium py-1 ml-4 sm:ml-0">Received By: </label>
-        <input type="text" v-model="received_by"
-               class="border mx-4 w-3/4 sm:w-1/2 p-2 border-sky-300 outline-none rounded-md">
-      </div>
-    </div>
-    <div ref="receiptContent" id="receiptContent" class="bg-white shadow-md rounded-md mt-3 p-6 w-11/12 sm:w-6/12">
-      <div class="py-5  border-2  border-blue-500 ">
-        <label class="text-xl italic ml-2">SA</label>
-      </div>
-      <div class="py-3 flex border-2 border-t-0 border-blue-500 ">
-        <label class="text-lg ml-2">
-          First Floor, Chawre Manzil, Opposite Z.B. College, Sopara Gaon(West) 401203
-        </label>
-      </div>
-      <div class="py-5  border-2 border-t-0 border-blue-500 text-center">
-        <label class="text-2xl font-bold text-blue-950">Cash Receipt</label>
-        <div class="text-end mr-5">
-          <label class="text-base text-black font-normal">Date: {{ formatDate(date) }}</label>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center">
+              <input
+                  type="checkbox"
+                  value="Cash"
+                  id="cash"
+                  v-model="payment_rec"
+                  class="h-5 w-5 text-blue-600 rounded focus:ring-blue-500 transition-all duration-200"
+              >
+              <span class="ml-2 text-gray-700">Cash</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input
+                  type="checkbox"
+                  value="Online"
+                  id="online"
+                  v-model="payment_rec"
+                  class="h-5 w-5 text-blue-600 rounded focus:ring-blue-500 transition-all duration-200"
+              >
+              <span class="ml-2 text-gray-700">Online</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input
+                  type="checkbox"
+                  value="Cheque"
+                  id="cheque"
+                  v-model="payment_rec"
+                  class="h-5 w-5 text-blue-600 rounded focus:ring-blue-500 transition-all duration-200"
+              >
+              <span class="ml-2 text-gray-700">Cheque</span>
+            </label>
+          </div>
         </div>
-        <div class="text-start ml-2 mt-4">
-          <label class="text-lg">Student Name: </label>
-          <input class="text-lg w-1/2 border-0 border-b border-blue-500 outline-none" v-model="students.name"/>
-        </div>
-        <div class="text-start ml-2 mt-4">
-          <label class="text-lg">Rs: </label>
-          <input class="text-lg w-6/12 border-0 border-b border-blue-500 outline-none" v-model="amountInWords"/>
-          <label class="text-lg">Std: </label>
-          <input class="text-lg w-3/12 border-0 border-b border-blue-500 outline-none" v-model="students.std"/>
-        </div>
-        <div class="ml-2 mt-4">
-          <table class="w-7/12 sm:w-4/12">
-            <tr class="border-2 border-blue-500">
-              <th class="p-2 border-r border-blue-500">
-                <label class="text-base text-black font-normal border-b-0">Total Amount Due</label>
-              </th>
-              <th class="p-2">
-                <label class="text-base text-black font-normal">{{ students.outstanding_fees }}</label>
-              </th>
-            </tr>
-            <tr class="border-2 border-blue-500">
-              <th class="p-2 border-r border-blue-500">
-                <label class="text-base text-black font-normal border-b-0">Amount Received</label>
-              </th>
-              <th class="p-2">
-                <label class="text-base text-black font-normal">{{ amount_received }}</label>
-              </th>
-            </tr>
-            <tr class="border-2 border-blue-500">
-              <th class="p-2 border-r border-blue-500">
-                <label class="text-base text-black font-normal">Balance Due</label>
-              </th>
-              <th class="p-2">
-                <label class="text-base text-black font-normal">{{ calculateDue }}</label>
-              </th>
-            </tr>
-          </table>
-        </div>
-        <div class="sm:flex text-start ml-2 mt-4">
-          <label class="text-base w-3/4 sm:w-6/12 text-black font-normal">Payment Received in: {{ payment_rec }}</label>
-          <input
-              class="border-0 border-b border-blue-400 w-6/12 sm:w-4/12 mr-2 sm:mr-0 ml-36 sm:ml-20 mt-2 sm:mt-0 text-center"
-              v-model="received_by">
-        </div>
-        <div class="text-end mr-9 sm:mr-20">
-          <label class="text-base text-black font-normal">Received By</label>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Received By</label>
+          <select
+              v-model="received_by"
+              class="w-full px-4 py-2 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+          >
+            <option value="" disabled selected>Select receiver</option>
+            <option v-for="receiver in receivers" :key="receiver" :value="receiver">
+              {{ receiver }}
+            </option>
+          </select>
         </div>
       </div>
     </div>
-    <button @click="printReceipt" type="button" class="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-md mt-3">
-      Download PDF
-    </button>
-    <button type="button" @click="updateFees" class="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-md mt-3">
-      Save
-    </button>
+
+    <!-- Receipt Preview with Animation -->
+    <div
+        ref="receiptContent"
+        id="receiptContent"
+        class="bg-white shadow-xl rounded-xl overflow-hidden w-full max-w-2xl animate-slide-up"
+    >
+      <!-- Receipt Header -->
+      <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-6 text-center">
+        <div class="flex justify-center items-center mb-2">
+          <div class="bg-white rounded-full p-3 shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
+            </svg>
+          </div>
+        </div>
+        <h1 class="text-3xl font-bold text-white">Scholars Academy</h1>
+        <p class="text-blue-100 mt-2">First Floor, Chawre Manzil, Opposite Z.B. College, Sopara Gaon(West) 401203</p>
+      </div>
+
+      <!-- Receipt Body -->
+      <div class="p-6">
+        <div class="text-center mb-8">
+          <h2 class="text-2xl font-bold text-gray-800">OFFICIAL RECEIPT</h2>
+          <p class="text-gray-500 mt-1">Date: {{ formatDate(date) }}</p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-500">Student Name</label>
+              <div class="mt-1 text-lg font-semibold text-gray-800 border-b-2 border-blue-200 pb-1">
+                {{ students.name || "________________" }}
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-500">Class</label>
+              <div class="mt-1 text-lg font-semibold text-gray-800 border-b-2 border-blue-200 pb-1">
+                {{ students.std || "____" }}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-500">Amount in Words</label>
+            <div class="mt-1 text-lg font-semibold text-gray-800 border-b-2 border-blue-200 pb-1">
+              {{ amountInWords }}
+            </div>
+          </div>
+
+          <!-- Payment Summary Table -->
+          <div class="overflow-hidden rounded-lg border border-gray-200 shadow-sm">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Description
+                </th>
+                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Amount (₹)
+                </th>
+              </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Total Amount Due</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                  {{ students.outstanding_fees || "0.00" }}
+                </td>
+              </tr>
+              <tr class="bg-blue-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-800">Amount Received</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-800 font-bold text-right">
+                  {{ amount_received || "0.00" }}
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Balance Due</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{{
+                    calculateDue || "0.00"
+                  }}
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-500">Payment Method</label>
+              <div class="mt-1 text-lg font-semibold text-gray-800">
+                {{ payment_rec.join(", ") }}
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-500">Received By</label>
+              <div class="mt-1 text-lg font-semibold text-gray-800 border-b-2 border-blue-200 pb-1">
+                {{ received_by }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Receipt Footer -->
+        <div class="mt-12 pt-6 border-t border-gray-200 text-center">
+          <p class="mt-8 text-xs text-gray-400">Thank you for your payment. This is a computer generated receipt and
+            does not require a physical signature.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-wrap justify-center gap-4 mt-8 animate-fade-in">
+      <button
+          @click="printReceipt"
+          class="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        Download PDF
+      </button>
+      <button
+          @click="updateFees"
+          class="flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        Save Receipt
+      </button>
+    </div>
   </div>
 </template>
 
@@ -117,6 +246,7 @@ export default {
       date: '',
       payment_rec: [],
       received_by: '',
+      receivers: ['Tauseef', 'Maqsood', 'Nusrat'],
       receipt_data: {},
     }
   },
@@ -213,7 +343,7 @@ export default {
 
       try {
         // Make sure the URL matches the one Django expects
-        let result = await axios.patch('http://127.0.0.1:8000/api/Students/' + this.$route.params.id + '/', {
+        let result = await axios.patch('http://127.0.0.1:8001/api/Students/' + this.$route.params.id + '/', {
           paid_fees: paidf,
           outstanding_fees: ot_fees
         });
@@ -231,7 +361,7 @@ export default {
           received_by: this.receipt_data.received_by,
         });
 
-        if (result.status === 200 &&  receipt.status === 201) {
+        if (result.status === 200 && receipt.status === 201) {
           this.$router.push({name: 'Home'});
         }
       } catch (error) {
@@ -248,5 +378,69 @@ export default {
 </script>
 
 <style scoped>
+/* Animation Classes */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
 
+.animate-slide-up {
+  animation: slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+#receiptContent {
+  background: white;
+}
+
+
+/* Print-specific styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #receiptContent, #receiptContent * {
+    visibility: visible;
+  }
+
+  #receiptContent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
 </style>

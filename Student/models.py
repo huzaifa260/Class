@@ -11,6 +11,7 @@ class Student(models.Model):
     total_fees = models.IntegerField(blank=True, null=True)
     paid_fees = models.IntegerField(blank=True, null=True)
     outstanding_fees = models.IntegerField(blank=True, null=True)
+    status = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} - {self.std}"

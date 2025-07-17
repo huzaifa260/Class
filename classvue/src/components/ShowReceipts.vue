@@ -1,4 +1,5 @@
 <template>
+  <HeaderC></HeaderC>
   <div v-for="i in receipt_data" :key="i">
     <div class="flex flex-col items-center justify-center mt-4 min-h-screen bg-gray-50">
       <div ref="receiptContent" id="receiptContent" class="bg-white shadow-md rounded-md mt-3 p-6 w-11/12 sm:w-6/12">
@@ -79,9 +80,13 @@
 
 <script>
 import axios from "axios";
+import HeaderC from "@/components/Header.vue";
 
 export default {
   name: 'ShowReceipts',
+  components: {
+    HeaderC
+  },
   data() {
     return {
       receipt_data: [],

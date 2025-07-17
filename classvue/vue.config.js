@@ -2,6 +2,13 @@ const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
   transpileDependencies: true
 })
+// vue.config.js
+module.exports = {
+  devServer: {
+    port: 8081, // You can change this to any free port
+  }
+};
+
 // module.exports = {
 //   devServer: {
 //     client: {
