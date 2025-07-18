@@ -12,6 +12,9 @@ class Student(models.Model):
     paid_fees = models.IntegerField(blank=True, null=True)
     outstanding_fees = models.IntegerField(blank=True, null=True)
     status = models.CharField(max_length=50, blank=True, null=True)
+    fees_type = models.CharField(max_length=20, blank=True, null=True)
+    paid_months = models.JSONField(default=list, blank=True, null=True)
+    starting_month = models.CharField(max_length=20, blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} - {self.std}"

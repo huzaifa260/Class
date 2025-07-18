@@ -27,7 +27,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
               </svg>
-              Yearly Student Records
+              Monthly Student Records
             </div>
           </th>
         </tr>
@@ -36,9 +36,8 @@
           <th class="p-4 text-left">Name</th>
           <th class="p-4 text-left">Class</th>
           <th class="p-4 text-left">Admission Date</th>
-          <th class="p-4 text-left">Total Fees</th>
-          <th class="p-4 text-left">Paid</th>
-          <th class="p-4 text-left">Outstanding</th>
+          <th class="p-4 text-left">Monthly Fees</th>
+          <th class="p-4 text-left">Paid Months</th>
           <th class="p-4 text-left">Actions</th>
         </tr>
         </thead>
@@ -70,12 +69,6 @@
           <td class="p-4 text-gray-700">{{ formatDate(i.admission_date) }}</td>
           <td class="p-4 font-medium text-gray-900">₹{{ i.total_fees }}</td>
           <td class="p-4 text-green-600 font-medium">₹{{ i.paid_fees }}</td>
-          <td class="p-4">
-              <span :class="{'text-red-600': i.outstanding_fees > 0, 'text-green-600': i.outstanding_fees <= 0}"
-                    class="font-medium">
-                ₹{{ i.outstanding_fees }}
-              </span>
-          </td>
           <td class="p-4 space-x-2">
             <router-link
                 :to="'/receipt/' + i.id"
@@ -125,7 +118,7 @@ import axios from 'axios';
 import HeaderC from './Header.vue';
 
 export default {
-  name: 'HomePage',
+  name: 'MonthlyStudents',
   components: {
     HeaderC
   },
@@ -162,8 +155,9 @@ export default {
   },
   methods: {
     async fetchData() {
-      let result = await axios.get('Students/?fees_type=yearly')
-      this.students = result.data
+      let result = await axios.get('Students/?fees_type=monthly');
+      this.students = result.data;
+
     },
     formatDate(dateString) {
       // Add date formatting logic if needed
@@ -186,8 +180,12 @@ export default {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {

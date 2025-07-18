@@ -14,8 +14,23 @@
       </h2>
 
       <div class="space-y-4">
+        <div v-if="students.fees_type === 'monthly'">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Select Month(s)</label>
+          <div class="flex flex-wrap gap-4">
+            <label v-for="m in availableMonths" :key="m" class="inline-flex items-center">
+              <input
+                  type="checkbox"
+                  :value="m"
+                  v-model="selected_months"
+                  class="h-5 w-5 text-blue-600 rounded focus:ring-blue-500 transition-all duration-200"
+              >
+              <span class="ml-2 text-gray-700">{{ m }}</span>
+            </label>
+          </div>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
+
+          <div v-if="students.fees_type === 'yearly'">
             <label class="block text-sm font-medium text-gray-700 mb-1">Amount Received (₹)</label>
             <input
                 type="number"
@@ -26,7 +41,7 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Admission Date</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Receipt Date</label>
             <input
                 type="date"
                 id="date"
@@ -131,7 +146,7 @@
             </div>
           </div>
 
-          <div>
+          <div v-if="students.fees_type === 'yearly'">
             <label class="block text-sm font-medium text-gray-500">Amount in Words</label>
             <div class="mt-1 text-lg font-semibold text-gray-800 border-b-2 border-blue-200 pb-1">
               {{ amountInWords }}
@@ -139,7 +154,9 @@
           </div>
 
           <!-- Payment Summary Table -->
-          <div class="overflow-hidden rounded-lg border border-gray-200 shadow-sm">
+          <div v-if="students.fees_type === 'yearly'"
+               class="overflow-hidden rounded-lg border border-gray-200 shadow-sm">
+
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
               <tr>
@@ -173,6 +190,25 @@
               </tr>
               </tbody>
             </table>
+          </div>
+          <div v-if="students.fees_type === 'monthly'">
+            <!-- Label -->
+            <label class="block text-sm font-medium text-gray-500">Monthly Fees</label>
+            <div class="mb-2 text-lg font-semibold text-gray-800">
+              ₹{{ students.total_fees || students.monthly_fees || "0.00" }} per month
+            </div>
+
+            <!-- Paid Months (selected by user) -->
+            <label class="block text-sm font-medium text-gray-500">Month(s) Paid:</label>
+            <div class="flex flex-wrap gap-2 my-2">
+            <span v-for="m in selected_months" :key="m"
+                  class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold border border-blue-300">
+                {{ m }}
+            </span>
+              <span v-if="selected_months.length === 0" class="text-gray-400 text-sm">
+                No months selected
+            </span>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
@@ -238,6 +274,7 @@ export default {
       students: {
         name: '',
         std: '',
+        fees_type: '',
         total_fees: 0,
         paid_fees: 0,
         outstanding_fees: 0,
@@ -248,6 +285,9 @@ export default {
       received_by: '',
       receivers: ['Tauseef', 'Maqsood', 'Nusrat'],
       receipt_data: {},
+      start_month: '',     // admission month as string, e.g., "July"
+      paid_months: [],
+      selected_months: [],
     }
   },
   components: {
@@ -268,7 +308,41 @@ export default {
     },
     amountInWords() {
       return this.convertToWords(this.amount_received)
-    }
+    },
+    availableMonths() {
+      if (this.students.fees_type !== 'monthly' || !this.start_month) return [];
+
+      const months_full = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+
+      const startIdx = months_full.indexOf(this.start_month);
+      if (startIdx === -1) return [];
+
+      let months = [];
+      if (startIdx <= 3) {
+        // Jan (0), Feb (1), Mar (2), Apr (3)
+        // So: from start month to April **of this year**
+        for (let i = startIdx; i <= 3; i++) {
+          months.push(months_full[i]);
+        }
+      } else {
+        // Start after April (May–Dec): from startMonth to December, *then* Jan–April next year
+        for (let i = startIdx; i < 12; i++) {
+          months.push(months_full[i]);
+        }
+        for (let i = 0; i <= 3; i++) {
+          months.push(months_full[i]);
+        }
+      }
+
+      // Exclude paid months
+      if (this.paid_months && Array.isArray(this.paid_months)) {
+        months = months.filter(m => !this.paid_months.includes(m));
+      }
+      return months;
+    },
   },
   methods: {
     convertToWords(num) {
@@ -319,6 +393,15 @@ export default {
             // Revert width back after PDF is generated
             element.style.width = originalWidth;
           });
+    },
+
+    formatMonth(m) {
+      const [year, month] = m.split("-");
+      const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      return `${monthNames[Number(month) - 1]} ${year}`;
     },
     updateReceiptData() {
       this.receipt_data = {
@@ -373,6 +456,8 @@ export default {
   async mounted() {
     let response = await axios.get('Students/' + this.$route.params.id)
     this.students = response.data
+    this.start_month = response.data.starting_month || 'July'  // Fallback for demo
+    this.paid_months = response.data.paid_months || [];
   }
 }
 </script>

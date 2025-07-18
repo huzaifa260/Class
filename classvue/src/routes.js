@@ -4,6 +4,7 @@ import LoginC2 from './components/Login2.vue';
 import AddStudent from "@/components/AddStudent.vue";
 import ReceiptM from "@/components/Receipt.vue";
 import ShowReceipts from "@/components/ShowReceipts.vue";
+import MonthlyStudents from "@/components/MonthlyStudents.vue";
 
 const routes = [
     {
@@ -15,6 +16,11 @@ const routes = [
         name:'Home',
         path:'/home',
         component:HomePage
+    },
+    {
+        name:'MonthlyStudents',
+        path:'/monthlystudents',
+        component:MonthlyStudents
     },
     {
         name:'AddStudent',

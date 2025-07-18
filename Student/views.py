@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from .models import Student, user, Receipt
 from .serializers import StudentSerializer, UserSerializer, ReceiptSerializer
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -16,6 +16,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['fees_type']  # or 'fees_type' if that's your field's name
 
 
 class UserViewSet(viewsets.ModelViewSet):

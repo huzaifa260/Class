@@ -95,7 +95,7 @@ export default {
   methods: {
     async showReceipts() {
       let sr = this.$route.params.id;
-      let response = await axios.get(`Receipt/?sr=${sr}`)
+      let response = await axios.get('Students/' + this.$route.params.id)
       this.receipt_data = response.data
     }
   },

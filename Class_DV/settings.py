@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'Student',
     'corsheaders',
+    'django_filters',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
