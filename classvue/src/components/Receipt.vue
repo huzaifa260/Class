@@ -11,6 +11,7 @@
                 d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
         </svg>
         Payment Details
+        {{ selected_months }}
       </h2>
 
       <div class="space-y-4">
@@ -404,17 +405,32 @@ export default {
       return `${monthNames[Number(month) - 1]} ${year}`;
     },
     updateReceiptData() {
-      this.receipt_data = {
-        receipt_date: this.formatDate(this.date),
-        stud_name: this.students.name,
-        rs: this.amountInWords,
-        std: this.students.std,
-        tot_amount_due: this.students.outstanding_fees,
-        amount_recived: this.amount_received,
-        balance_due: this.calculateDue,
-        payment_received_in: this.payment_rec,
-        received_by: this.received_by
+      if (this.students.fees_type === 'monthly') {
+        this.receipt_data = {
+          receipt_date: this.formatDate(this.date),
+          stud_name: this.students.name,
+          rs: this.amountInWords,
+          std: this.students.std,
+          tot_amount_due: this.students.outstanding_fees,
+          amount_recived: this.amount_received,
+          balance_due: this.calculateDue,
+          payment_received_in: this.payment_rec,
+          received_by: this.received_by
+        };
+        // Save or further processing here
+      } else {
+        // Handle other fees types or do nothing
+        this.receipt_data = {
+          receipt_date: this.formatDate(this.date),
+          stud_name: this.students.name,
+          rs: this.amountInWords,
+          std: this.students.std,
+          paid_months: this.selected_months,
+          payment_received_in: this.payment_rec,
+          received_by: this.received_by
+        }
       }
+
     },
     async updateFees() {
       let paidf = this.totalPaidFees;
@@ -426,12 +442,20 @@ export default {
 
       try {
         // Make sure the URL matches the one Django expects
-        let result = await axios.patch('http://127.0.0.1:8001/api/Students/' + this.$route.params.id + '/', {
-          paid_fees: paidf,
-          outstanding_fees: ot_fees
-        });
+        if (this.students.fees_type === 'yearly') {
+          await axios.patch('http://127.0.0.1:8001/api/Students/' + this.$route.params.id + '/', {
+            paid_fees: paidf,
+            outstanding_fees: ot_fees
+          });
+        } else {
+          let updatedPaidMonths = this.paid_months.concat(this.selected_months)
+          // we first take paid months and add currently paid months in it
+          await axios.patch('http://127.0.0.1:8001/api/Students/' + this.$route.params.id + '/', {
+            paid_months: updatedPaidMonths,
+          });
+        }
 
-        let receipt = await axios.post('Receipt/', {
+        await axios.post('Receipt/', {
           sr: sr,
           receipt_date: this.receipt_data.receipt_date,
           stud_name: this.receipt_data.stud_name,
@@ -443,10 +467,8 @@ export default {
           payment_received_in: this.receipt_data.payment_received_in.toString(), // Convert array to string
           received_by: this.receipt_data.received_by,
         });
+        this.$router.push({name: 'Home'});
 
-        if (result.status === 200 && receipt.status === 201) {
-          this.$router.push({name: 'Home'});
-        }
       } catch (error) {
         console.error("Error during update:", error);
       }
