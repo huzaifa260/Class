@@ -37,5 +37,6 @@ class Receipt(models.Model):
     tot_amount_due = models.CharField(max_length=30, blank=True, null=True)
     amount_recived = models.CharField(max_length=30, blank=True, null=True)
     balance_due = models.CharField(max_length=30, blank=True, null=True)
+    paid_months = models.JSONField(default=list, blank=True, null=True)
     payment_received_in = models.CharField(max_length=150, blank=True, null=True)
     received_by = models.CharField(max_length=100, blank=True, null=True)

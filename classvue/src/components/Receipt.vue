@@ -419,7 +419,6 @@ export default {
         };
         // Save or further processing here
       } else {
-        // Handle other fees types or do nothing
         this.receipt_data = {
           receipt_date: this.formatDate(this.date),
           stud_name: this.students.name,
@@ -455,18 +454,31 @@ export default {
           });
         }
 
-        await axios.post('Receipt/', {
-          sr: sr,
-          receipt_date: this.receipt_data.receipt_date,
-          stud_name: this.receipt_data.stud_name,
-          rs: this.receipt_data.rs,
-          std: this.receipt_data.std,
-          tot_amount_due: this.receipt_data.tot_amount_due.toString(),  // Convert to string
-          amount_recived: this.receipt_data.amount_recived.toString(),  // Convert to string
-          balance_due: this.receipt_data.balance_due.toString(),        // Convert to string
-          payment_received_in: this.receipt_data.payment_received_in.toString(), // Convert array to string
-          received_by: this.receipt_data.received_by,
-        });
+        if (this.students.fees_type === 'yearly') {
+          await axios.post('Receipt/', {
+            sr: sr,
+            receipt_date: this.receipt_data.receipt_date,
+            stud_name: this.receipt_data.stud_name,
+            rs: this.receipt_data.rs,
+            std: this.receipt_data.std,
+            tot_amount_due: this.receipt_data.tot_amount_due.toString(),  // Convert to string
+            amount_recived: this.receipt_data.amount_recived.toString(),  // Convert to string
+            balance_due: this.receipt_data.balance_due.toString(),        // Convert to string
+            payment_received_in: this.receipt_data.payment_received_in.toString(), // Convert array to string
+            received_by: this.receipt_data.received_by,
+          });
+        } else {
+          await axios.post('Receipt/', {
+            sr: sr,
+            receipt_date: this.receipt_data.receipt_date,
+            stud_name: this.receipt_data.stud_name,
+            rs: this.receipt_data.rs,
+            std: this.receipt_data.std,
+            paid_months: this.selected_months,
+            payment_received_in: this.receipt_data.payment_received_in.toString(), // Convert array to string
+            received_by: this.receipt_data.received_by,
+          });
+        }
         this.$router.push({name: 'Home'});
 
       } catch (error) {
