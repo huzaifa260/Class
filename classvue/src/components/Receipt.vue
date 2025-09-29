@@ -109,7 +109,7 @@
         class="bg-white shadow-xl rounded-xl overflow-hidden w-full max-w-2xl animate-slide-up"
     >
       <!-- Receipt Header -->
-      <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-6 text-center">
+      <div class="receipt-header p-6 text-center">
         <div class="flex justify-center items-center mb-2">
           <div class="bg-white rounded-full p-3 shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24"
@@ -199,73 +199,79 @@
             </div>
 
             <!-- Paid Months (selected by user) -->
-            <label class="block text-sm font-medium text-gray-500">Month(s) Paid:</label>
-            <div class="flex flex-wrap gap-2 my-2">
-            <span v-for="m in selected_months" :key="m"
-                  class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold border border-blue-300">
-                {{ m }}
-            </span>
-              <span v-if="selected_months.length === 0" class="text-gray-400 text-sm">
-                No months selected
-            </span>
+            <div class="flex items-center gap-4">
+
+              <label class="block text-sm font-medium text-gray-500 shrink-0">Month(s) Paid:</label>
+
+              <div class="flex flex-wrap gap-2">
+    <span v-for="m in selected_months" :key="m"
+          class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold border border-blue-300">
+      {{ m }}
+    </span>
+                <span v-if="selected_months.length === 0" class="text-gray-400 text-sm">
+      No months selected
+    </span>
+              </div>
+
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-500">Payment Method</label>
-              <div class="mt-1 text-lg font-semibold text-gray-800">
-                {{ payment_rec.join(", ") }}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-500">Payment Method</label>
+                <div class="mt-1 text-lg font-semibold text-gray-800">
+                  {{ payment_rec.join(", ") }}
+                </div>
               </div>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-500">Received By</label>
-              <div class="mt-1 text-lg font-semibold text-gray-800 border-b-2 border-blue-200 pb-1">
-                {{ received_by }}
+              <div>
+                <label class="block text-sm font-medium text-gray-500">Received By</label>
+                <div class="mt-1 text-lg font-semibold text-gray-800 border-b-2 border-blue-200 pb-1">
+                  {{ received_by }}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Receipt Footer -->
-        <div class="mt-12 pt-6 border-t border-gray-200 text-center">
-          <p class="mt-8 text-xs text-gray-400">Thank you for your payment. This is a computer generated receipt and
-            does not require a physical signature.</p>
+          <!-- Receipt Footer -->
+          <div class="mt-12 pt-6 border-t border-gray-200 text-center">
+            <p class="mt-8 text-xs text-gray-400">Thank you for your payment. This is a computer generated receipt and
+              does not require a physical signature.</p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Action Buttons -->
-    <div class="flex flex-wrap justify-center gap-4 mt-8 animate-fade-in">
-      <button
-          @click="printReceipt"
-          class="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-             stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-        </svg>
-        Download PDF
-      </button>
-      <button
-          @click="updateFees"
-          class="flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-             stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-        </svg>
-        Save Receipt
-      </button>
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap justify-center gap-4 mt-8 animate-fade-in">
+        <button
+            @click="printReceipt"
+            class="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+               stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          Download PDF
+        </button>
+        <button
+            @click="updateFees"
+            class="flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+               stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          Save Receipt
+        </button>
+      </div>
     </div>
-  </div>
 </template>
 
 <script>
 import axios from "axios";
 import HeaderC from "@/components/Header.vue";
-import html2pdf from "html2pdf.js";
+import * as htmlToImage from 'html-to-image'; // <-- NEW, FINAL library
+import jsPDF from 'jspdf';                     // <-- For creating the PDF document
 
 export default {
   name: 'ReceiptM',
@@ -285,7 +291,7 @@ export default {
       received_by: '',
       receivers: ['Tauseef', 'Maqsood', 'Nusrat'],
       receipt_data: {},
-      start_month: '',     // admission month as string, e.g., "July"
+      start_month: '',
       paid_months: [],
       selected_months: [],
     }
@@ -311,33 +317,16 @@ export default {
     },
     availableMonths() {
       if (this.students.fees_type !== 'monthly' || !this.start_month) return [];
-
-      const months_full = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-      ];
-
+      const months_full = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       const startIdx = months_full.indexOf(this.start_month);
       if (startIdx === -1) return [];
-
       let months = [];
       if (startIdx <= 3) {
-        // Jan (0), Feb (1), Mar (2), Apr (3)
-        // So: from start month to April **of this year**
-        for (let i = startIdx; i <= 3; i++) {
-          months.push(months_full[i]);
-        }
+        for (let i = startIdx; i <= 3; i++) months.push(months_full[i]);
       } else {
-        // Start after April (May–Dec): from startMonth to December, *then* Jan–April next year
-        for (let i = startIdx; i < 12; i++) {
-          months.push(months_full[i]);
-        }
-        for (let i = 0; i <= 3; i++) {
-          months.push(months_full[i]);
-        }
+        for (let i = startIdx; i < 12; i++) months.push(months_full[i]);
+        for (let i = 0; i <= 3; i++) months.push(months_full[i]);
       }
-
-      // Exclude paid months
       if (this.paid_months && Array.isArray(this.paid_months)) {
         months = months.filter(m => !this.paid_months.includes(m));
       }
@@ -345,17 +334,37 @@ export default {
     },
   },
   methods: {
+    // FINAL PDF GENERATION METHOD using html-to-image
+    printReceipt() {
+      const node = document.getElementById('receiptContent');
+
+      htmlToImage.toPng(node, {
+          pixelRatio: 3, // Use a high pixel ratio for a crisp, high-resolution image
+          backgroundColor: '#ffffff'
+         })
+        .then((dataUrl) => {
+          const doc = new jsPDF('p', 'mm', 'a4');
+          const pdfWidth = doc.internal.pageSize.getWidth();
+          const margin = 10;
+          const imgWidth = pdfWidth - (margin * 2);
+
+          const imgProps = doc.getImageProperties(dataUrl);
+          const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+          doc.addImage(dataUrl, 'PNG', margin, margin, imgWidth, imgHeight);
+          doc.save(`Receipt_${this.students.name}_${this.formatDate(this.date)}.pdf`);
+        })
+        .catch((error) => {
+          console.error('PDF Generation Error:', error);
+        });
+    },
+
+    // All your other methods below are unchanged
     convertToWords(num) {
       if (!num) return '';
-
-      const a = [
-        '', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
-        'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
-      ];
+      const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
       const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-
       let result = '';
-
       if (num < 20) result = a[num];
       else if (num < 100) result = b[Math.floor(num / 10)] + (num % 10 ? ' ' + a[num % 10] : '');
       else if (num < 1000) result = a[Math.floor(num / 100)] + ' Hundred' + (num % 100 ? ' ' + this.convertToWords(num % 100) : '');
@@ -363,130 +372,48 @@ export default {
       else if (num < 10000000) result = this.convertToWords(Math.floor(num / 100000)) + ' Lakh' + (num % 100000 ? ' ' + this.convertToWords(num % 100000) : '');
       else if (num < 1000000000) result = this.convertToWords(Math.floor(num / 10000000)) + ' Crore' + (num % 10000000 ? ' ' + this.convertToWords(num % 10000000) : '');
       else return 'Number too large';
-
       return result.charAt(0).toUpperCase() + result.slice(1);
     },
     formatDate(date) {
-      // Format date to DD-MM-YYYY
       if (!date) return '';
       const [year, month, day] = date.split('-');
       return `${day} / ${month} / ${year}`;
     },
-    printReceipt() {
-      // Get the element to print
-      const element = document.getElementById('receiptContent');
-
-      // Options for the PDF generation
-      const opt = {
-        margin: 10,
-        filename: `Receipt_${this.students.name}_${this.formatDate(this.date)}.pdf`,
-        image: {type: 'jpeg', quality: 0.98},
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          letterRendering: true,
-          allowTaint: true
-        },
-        jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
-        pagebreak: {mode: ['avoid-all', 'css', 'legacy']}
-      };
-
-      // Generate PDF from HTML element
-      html2pdf()
-          .set(opt)
-          .from(element)
-          .save()
-          .then(() => {
-            console.log('PDF generated successfully');
-          })
-          .catch((error) => {
-            console.error('Error generating PDF:', error);
-          });
-    },
-
     formatMonth(m) {
       const [year, month] = m.split("-");
-      const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-      ];
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
       return `${monthNames[Number(month) - 1]} ${year}`;
     },
     updateReceiptData() {
-      if (this.students.fees_type === 'yearly') { // <-- This condition now correctly matches the object being created
-        this.receipt_data = {
-          receipt_date: this.formatDate(this.date),
-          stud_name: this.students.name,
-          rs: this.amountInWords,
-          std: this.students.std,
-          tot_amount_due: this.students.outstanding_fees,
-          amount_recived: this.amount_received,
-          balance_due: this.calculateDue,
-          payment_received_in: this.payment_rec,
-          received_by: this.received_by
-        };
-      } else { // <-- This is for 'monthly'
-        this.receipt_data = {
-          receipt_date: this.formatDate(this.date),
-          stud_name: this.students.name,
-          rs: this.amountInWords, // You may want to calculate this based on selected months
-          std: this.students.std,
-          paid_months: this.selected_months,
-          payment_received_in: this.payment_rec,
-          received_by: this.received_by
-        };
+      if (this.students.fees_type === 'yearly') {
+        this.receipt_data = { receipt_date: this.formatDate(this.date), stud_name: this.students.name, rs: this.amountInWords, std: this.students.std, tot_amount_due: this.students.outstanding_fees, amount_recived: this.amount_received, balance_due: this.calculateDue, payment_received_in: this.payment_rec, received_by: this.received_by };
+      } else {
+        this.receipt_data = { receipt_date: this.formatDate(this.date), stud_name: this.students.name, rs: this.amountInWords, std: this.students.std, paid_months: this.selected_months, payment_received_in: this.payment_rec, received_by: this.received_by };
       }
     },
     async updateFees() {
-  const sr = this.$route.params.id;
-
-  // 1. Create the correct receipt data object first
-  this.updateReceiptData();
-  console.log("Receipt data to be saved:", this.receipt_data);
-
-  try {
-    // 2. Update the student's fees record
-    if (this.students.fees_type === 'yearly') {
-      await axios.patch(`http://127.0.0.1:8001/api/Students/${sr}/`, {
-        paid_fees: this.totalPaidFees,
-        outstanding_fees: this.calculateDue
-      });
-    } else { // 'monthly'
-      const updatedPaidMonths = this.paid_months.concat(this.selected_months);
-      await axios.patch(`http://127.0.0.1:8001/api/Students/${sr}/`, {
-        paid_months: updatedPaidMonths,
-      });
+      const sr = this.$route.params.id;
+      this.updateReceiptData();
+      try {
+        if (this.students.fees_type === 'yearly') {
+          await axios.patch(`http://127.0.0.1:8001/api/Students/${sr}/`, { paid_fees: this.totalPaidFees, outstanding_fees: this.calculateDue });
+        } else {
+          const updatedPaidMonths = this.paid_months.concat(this.selected_months);
+          await axios.patch(`http://127.0.0.1:8001/api/Students/${sr}/`, { paid_months: updatedPaidMonths, });
+        }
+        const receiptPayload = { ...this.receipt_data, sr: sr, tot_amount_due: this.receipt_data.tot_amount_due?.toString(), amount_recived: this.receipt_data.amount_recived?.toString(), balance_due: this.receipt_data.balance_due?.toString(), payment_received_in: this.receipt_data.payment_received_in.join(", ") };
+        await axios.post('Receipt/', receiptPayload);
+        this.$router.push({ name: 'Home' });
+      } catch (error) {
+        console.error("Error during update:", error);
+        if (error.response) { console.error("Backend Error Data:", error.response.data); }
+      }
     }
-
-    // 3. Post the new receipt data
-    // Add the student's ID (sr) to the data and send the whole object.
-    const receiptPayload = {
-        ...this.receipt_data,
-        sr: sr,
-        // Ensure numeric fields are strings if your backend expects them that way
-        tot_amount_due: this.receipt_data.tot_amount_due?.toString(),
-        amount_recived: this.receipt_data.amount_recived?.toString(),
-        balance_due: this.receipt_data.balance_due?.toString(),
-        payment_received_in: this.receipt_data.payment_received_in.join(", ") // Convert array to comma-separated string
-    };
-
-    await axios.post('Receipt/', receiptPayload);
-
-    this.$router.push({ name: 'Home' });
-
-  } catch (error) {
-    console.error("Error during update:", error);
-    if (error.response) {
-      console.error("Backend Error Data:", error.response.data);
-    }
-  }
-}
-
   },
   async mounted() {
     let response = await axios.get('Students/' + this.$route.params.id)
     this.students = response.data
-    this.start_month = response.data.starting_month || 'July'  // Fallback for demo
+    this.start_month = response.data.starting_month || 'July'
     this.paid_months = response.data.paid_months || [];
   }
 }
@@ -529,33 +456,15 @@ export default {
   }
 }
 
-#receiptContent {
-  background: white;
+
+.receipt-header {
+  background-image: url('@/assets/gradient-bg.png');
+  background-size: cover; /* Ensures the image covers the whole area */
+  background-position: center; /* Centers the image */
 }
 
-
-/* Print-specific styles */
-@media print {
-  body * {
-    visibility: hidden;
-  }
-
-  #receiptContent, #receiptContent * {
-    visibility: visible;
-  }
-
-  #receiptContent {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    box-shadow: none;
-  }
-
-  .no-print {
-    display: none !important;
-  }
+.no-print {
+  display: none !important;
 }
+
 </style>
