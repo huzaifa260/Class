@@ -17,7 +17,7 @@
         <div ref="receiptContent" class="bg-white rounded-xl shadow-lg overflow-hidden">
           <!-- Receipt Header -->
           <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-6 text-center">
-            <h2 class="text-2xl font-bold text-white">SA Educational Institute</h2>
+            <h2 class="text-2xl font-bold text-white">Scholar's Academy</h2>
             <p class="text-blue-100 mt-1">First Floor, Chawre Manzil, Opposite Z.B. College, Sopara Gaon(West) 401203</p>
           </div>
 
@@ -169,7 +169,7 @@ export default {
         return methods.join(', ');
       }
       // Remove brackets and quotes if present
-      return methods.toString().replace(/[\[\]"]+/g, '');
+      return methods.toString().replace(/[[\]"]+/g, '');
     },
     printReceipt(index) {
       const element = this.$refs.receiptContent[index];

@@ -11,7 +11,6 @@
                 d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
         </svg>
         Payment Details
-        {{ selected_months }}
       </h2>
 
       <div class="space-y-4">
@@ -374,25 +373,34 @@ export default {
       return `${day} / ${month} / ${year}`;
     },
     printReceipt() {
-      const element = this.$refs.receiptContent;
+      // Get the element to print
+      const element = document.getElementById('receiptContent');
 
-      // Temporarily increase width for PDF
-      const originalWidth = element.style.width;
-      element.style.width = "100%";
+      // Options for the PDF generation
+      const opt = {
+        margin: 10,
+        filename: `Receipt_${this.students.name}_${this.formatDate(this.date)}.pdf`,
+        image: {type: 'jpeg', quality: 0.98},
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          letterRendering: true,
+          allowTaint: true
+        },
+        jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
+        pagebreak: {mode: ['avoid-all', 'css', 'legacy']}
+      };
 
+      // Generate PDF from HTML element
       html2pdf()
+          .set(opt)
           .from(element)
-          .set({
-            margin: 10,
-            filename: `receipt_${this.students.name}.pdf`,
-            image: {type: "jpeg", quality: 0.98},
-            html2canvas: {scale: 2},
-            jsPDF: {unit: "mm", format: "a4", orientation: "portrait"}
-          })
           .save()
           .then(() => {
-            // Revert width back after PDF is generated
-            element.style.width = originalWidth;
+            console.log('PDF generated successfully');
+          })
+          .catch((error) => {
+            console.error('Error generating PDF:', error);
           });
     },
 
@@ -405,7 +413,7 @@ export default {
       return `${monthNames[Number(month) - 1]} ${year}`;
     },
     updateReceiptData() {
-      if (this.students.fees_type === 'monthly') {
+      if (this.students.fees_type === 'yearly') { // <-- This condition now correctly matches the object being created
         this.receipt_data = {
           receipt_date: this.formatDate(this.date),
           stud_name: this.students.name,
@@ -417,74 +425,62 @@ export default {
           payment_received_in: this.payment_rec,
           received_by: this.received_by
         };
-        // Save or further processing here
-      } else {
+      } else { // <-- This is for 'monthly'
         this.receipt_data = {
           receipt_date: this.formatDate(this.date),
           stud_name: this.students.name,
-          rs: this.amountInWords,
+          rs: this.amountInWords, // You may want to calculate this based on selected months
           std: this.students.std,
           paid_months: this.selected_months,
           payment_received_in: this.payment_rec,
           received_by: this.received_by
-        }
+        };
       }
-
     },
     async updateFees() {
-      let paidf = this.totalPaidFees;
-      let ot_fees = this.calculateDue;
-      let sr = this.$route.params.id
-      console.log("Sr = ", sr)
-      this.updateReceiptData()
-      console.log("Rec data", this.receipt_data)
+  const sr = this.$route.params.id;
 
-      try {
-        // Make sure the URL matches the one Django expects
-        if (this.students.fees_type === 'yearly') {
-          await axios.patch('http://127.0.0.1:8001/api/Students/' + this.$route.params.id + '/', {
-            paid_fees: paidf,
-            outstanding_fees: ot_fees
-          });
-        } else {
-          let updatedPaidMonths = this.paid_months.concat(this.selected_months)
-          // we first take paid months and add currently paid months in it
-          await axios.patch('http://127.0.0.1:8001/api/Students/' + this.$route.params.id + '/', {
-            paid_months: updatedPaidMonths,
-          });
-        }
+  // 1. Create the correct receipt data object first
+  this.updateReceiptData();
+  console.log("Receipt data to be saved:", this.receipt_data);
 
-        if (this.students.fees_type === 'yearly') {
-          await axios.post('Receipt/', {
-            sr: sr,
-            receipt_date: this.receipt_data.receipt_date,
-            stud_name: this.receipt_data.stud_name,
-            rs: this.receipt_data.rs,
-            std: this.receipt_data.std,
-            tot_amount_due: this.receipt_data.tot_amount_due.toString(),  // Convert to string
-            amount_recived: this.receipt_data.amount_recived.toString(),  // Convert to string
-            balance_due: this.receipt_data.balance_due.toString(),        // Convert to string
-            payment_received_in: this.receipt_data.payment_received_in.toString(), // Convert array to string
-            received_by: this.receipt_data.received_by,
-          });
-        } else {
-          await axios.post('Receipt/', {
-            sr: sr,
-            receipt_date: this.receipt_data.receipt_date,
-            stud_name: this.receipt_data.stud_name,
-            rs: this.receipt_data.rs,
-            std: this.receipt_data.std,
-            paid_months: this.selected_months,
-            payment_received_in: this.receipt_data.payment_received_in.toString(), // Convert array to string
-            received_by: this.receipt_data.received_by,
-          });
-        }
-        this.$router.push({name: 'Home'});
-
-      } catch (error) {
-        console.error("Error during update:", error);
-      }
+  try {
+    // 2. Update the student's fees record
+    if (this.students.fees_type === 'yearly') {
+      await axios.patch(`http://127.0.0.1:8001/api/Students/${sr}/`, {
+        paid_fees: this.totalPaidFees,
+        outstanding_fees: this.calculateDue
+      });
+    } else { // 'monthly'
+      const updatedPaidMonths = this.paid_months.concat(this.selected_months);
+      await axios.patch(`http://127.0.0.1:8001/api/Students/${sr}/`, {
+        paid_months: updatedPaidMonths,
+      });
     }
+
+    // 3. Post the new receipt data
+    // Add the student's ID (sr) to the data and send the whole object.
+    const receiptPayload = {
+        ...this.receipt_data,
+        sr: sr,
+        // Ensure numeric fields are strings if your backend expects them that way
+        tot_amount_due: this.receipt_data.tot_amount_due?.toString(),
+        amount_recived: this.receipt_data.amount_recived?.toString(),
+        balance_due: this.receipt_data.balance_due?.toString(),
+        payment_received_in: this.receipt_data.payment_received_in.join(", ") // Convert array to comma-separated string
+    };
+
+    await axios.post('Receipt/', receiptPayload);
+
+    this.$router.push({ name: 'Home' });
+
+  } catch (error) {
+    console.error("Error during update:", error);
+    if (error.response) {
+      console.error("Backend Error Data:", error.response.data);
+    }
+  }
+}
 
   },
   async mounted() {

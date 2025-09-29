@@ -39,9 +39,19 @@ const routes = [
     },
 ]
 
-const router=createRouter({
-    history:createWebHistory(),
-    routes
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
+  routes,
+  // ADD THIS FUNCTION vvv
+  scrollBehavior(to, from, savedPosition) {
+    // If the user is navigating back/forward, use the saved position
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      // For all other new navigations, scroll to the top of the page
+      return { top: 0 }
+    }
+  },
 })
 
 export default router;
