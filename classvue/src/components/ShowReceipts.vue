@@ -117,7 +117,8 @@
 <script>
 import axios from "axios";
 import HeaderC from "@/components/Header.vue";
-import html2pdf from "html2pdf.js";
+import * as htmlToImage from 'html-to-image'; // <-- The successful library
+import jsPDF from 'jspdf';                     // <-- For creating the PDF
 
 export default {
   name: 'ShowReceipts',
@@ -133,23 +134,10 @@ export default {
   methods: {
     async showReceipts() {
       try {
-        // Fetch student information
         const studentResponse = await axios.get(`Students/${this.$route.params.id}`);
         this.student_info = studentResponse.data;
-
-        // Fetch receipt history
         const receiptResponse = await axios.get(`Receipt/?sr=${this.$route.params.id}`);
-        this.receipt_data = receiptResponse.data.map(receipt => {
-          // Parse payment_received_in if it's stored as string
-          if (typeof receipt.payment_received_in === 'string') {
-            try {
-              receipt.payment_received_in = JSON.parse(receipt.payment_received_in);
-            } catch {
-              receipt.payment_received_in = [receipt.payment_received_in];
-            }
-          }
-          return receipt;
-        });
+        this.receipt_data = receiptResponse.data;
       } catch (error) {
         console.error("Error fetching receipts:", error);
       }
@@ -158,8 +146,11 @@ export default {
       if (!months) return [];
       if (Array.isArray(months)) return months;
       try {
-        return JSON.parse(months);
+        // Attempt to parse if it's a JSON string array like '["June", "July"]'
+        const parsed = JSON.parse(months);
+        return Array.isArray(parsed) ? parsed : [months];
       } catch {
+        // Fallback for a simple string
         return [months];
       }
     },
@@ -168,23 +159,39 @@ export default {
       if (Array.isArray(methods)) {
         return methods.join(', ');
       }
-      // Remove brackets and quotes if present
       return methods.toString().replace(/[[\]"]+/g, '');
     },
+
+    // FINAL PDF GENERATION METHOD using html-to-image
     printReceipt(index) {
-      const element = this.$refs.receiptContent[index];
-      const opt = {
-        margin: 10,
-        filename: `receipt_${this.receipt_data[index].stud_name}_${index}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          ignoreElements: (element) => element.classList.contains('no-print')
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      // Get the specific receipt element from the v-for loop
+      const node = this.$refs.receiptContent[index];
+
+      const options = {
+        pixelRatio: 3, // Use a high pixel ratio for a crisp, high-resolution image
+        backgroundColor: '#ffffff',
+        // This function tells the library to ignore any element with the 'no-print' class
+        filter: (element) => {
+          return element.classList ? !element.classList.contains('no-print') : true;
+        }
       };
 
-      html2pdf().from(element).set(opt).save();
+      htmlToImage.toPng(node, options)
+        .then((dataUrl) => {
+          const doc = new jsPDF('p', 'mm', 'a4');
+          const pdfWidth = doc.internal.pageSize.getWidth();
+          const margin = 10;
+          const imgWidth = pdfWidth - (margin * 2);
+
+          const imgProps = doc.getImageProperties(dataUrl);
+          const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+          doc.addImage(dataUrl, 'PNG', margin, margin, imgWidth, imgHeight);
+          doc.save(`Receipt_${this.receipt_data[index].stud_name}.pdf`);
+        })
+        .catch((error) => {
+          console.error('PDF Generation Error:', error);
+        });
     }
   },
   mounted() {

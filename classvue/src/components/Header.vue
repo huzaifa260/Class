@@ -1,10 +1,39 @@
 <template>
-<div class="flex gap-1 sm:gap-2 w-full bg-black p-4 sm:p-0 sm:h-16">
-    <router-link to="/home" class="text-sm sm:text-xl text-gray-200 sm:ml-2 sm:pt-4 px-2 hover:bg-white hover:text-black">Yearly Students</router-link>
-    <router-link to="/monthlystudents" class="text-sm sm:text-xl text-gray-200 sm:ml-2 sm:pt-4 px-2 hover:bg-white hover:text-black">Monthly Students</router-link>
-    <router-link to="/addstu" class="text-sm sm:text-xl text-gray-200 sm:ml-2 sm:pt-4 px-2 hover:bg-white hover:text-black">Add Student</router-link>
-    <router-link to="" class="text-sm sm:text-xl text-gray-200 sm:ml-2 sm:pt-4 px-2 hover:bg-white hover:text-black">Receipt</router-link>
-    <a href="" v-on:click="Logout" class="text-sm sm:text-xl text-gray-200 sm:ml-2 sm:pt-4 px-2 hover:bg-white hover:text-black">Logout</a>
+<div class="relative w-full bg-gradient-to-r from-gray-900 via-black to-gray-900 shadow-2xl">
+    <div class="flex gap-2 sm:gap-4 w-full px-4 py-3 sm:px-6 items-center relative">
+
+        <router-link
+            to="/home"
+            class="relative group text-sm sm:text-base text-gray-300 px-3 py-2 rounded-md transition-all duration-300 ease-out hover:text-white font-medium">
+            <span class="relative z-10">Yearly Students</span>
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </router-link>
+
+        <router-link
+            to="/monthlystudents"
+            class="relative group text-sm sm:text-base text-gray-300 px-3 py-2 rounded-md transition-all duration-300 ease-out hover:text-white font-medium">
+            <span class="relative z-10">Monthly Students</span>
+            <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-600 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </router-link>
+
+        <router-link
+            to="/addstu"
+            class="relative group text-sm sm:text-base text-gray-300 px-3 py-2 rounded-md transition-all duration-300 ease-out hover:text-white font-medium">
+            <span class="relative z-10">Add Student</span>
+            <div class="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-600 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </router-link>
+
+        <a
+            href=""
+            v-on:click="Logout"
+            class="relative group text-sm sm:text-base text-gray-300 px-3 py-2 rounded-md transition-all duration-300 ease-out hover:text-white font-medium ml-auto">
+            <span class="relative z-10">Logout</span>
+            <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-orange-600 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </a>
+    </div>
+
+    <!-- Bottom accent line with animation -->
+    <div class="h-0.5 w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-gradient"></div>
 </div>
 </template>
 
@@ -25,5 +54,37 @@ export default {
 </script>
 
 <style scoped>
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
 
+.animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+}
+
+/* Active route styling */
+.router-link-active {
+    @apply text-white;
+}
+
+.router-link-active::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(to right, #3b82f6, #8b5cf6);
+    border-radius: 2px;
+}
 </style>
